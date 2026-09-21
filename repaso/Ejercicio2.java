@@ -1,10 +1,19 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Ejercicio1 {
+public class Ejercicio2 {
+
+    //Repite el ejercicio anterior, pero usa BufferedWriter y BufferedReader.
+
+    /*Compara el tiempo con el del ejercicio 1. ¿Cuál fue más eficiente? ¿Por qué?
+    Con Buffer el el tiempo total el mucho menor que en el ejercicio 1 en el que no se utiliza.
+    Sin utilizar Buffer el programa debe hacer muchas más llamadas al sistema mientras que con él
+    tan solo tiene que hacer una.*/
 
     static Scanner numeros = new Scanner(System.in);
 
@@ -14,21 +23,17 @@ public class Ejercicio1 {
     static boolean hecho = false;
     static boolean contado = false;
 
-    // Crea un fichero texto_sin_buffer.txt
-    // Escribe en él varias frases de ejemplo (10.000 veces la palabra "Java")
     public static void crearEscribir(String a) {
         long tinicioCE = System.nanoTime();
-        try {
-            File fichero = new File(a);
-            FileOutputStream fo = new FileOutputStream(fichero);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(a)))) {
 
             for (int i = 0; i < 10000; i++) {
-                fo.write("Java\n".getBytes());
+                bw.write("Java\n");
             }
 
             System.out.println("Fichero creado y escrito correctamente.");
 
-            fo.close();
+            bw.close();
 
             long tfinCE = System.nanoTime();
 
@@ -41,18 +46,15 @@ public class Ejercicio1 {
         }
     }
 
-    // Cierra el fichero y luego léelo de nuevo para contar cuántas líneas tiene.
     public static void contarLineas(String a) {
         int contadorLineas = 0;
 
         long tinicioCL = System.nanoTime();
 
-        try {
-            File fichero = new File(a);
+        try (BufferedReader br = new BufferedReader(new FileReader(new File(a)))){
 
-            FileInputStream fi = new FileInputStream(fichero);
             int caracter;
-            while ((caracter = fi.read()) != -1) {
+            while ((caracter = br.read()) != -1) {
                 if ((char) caracter == '\n') {
                     contadorLineas++;
                 }
@@ -60,7 +62,7 @@ public class Ejercicio1 {
 
             System.out.println("El fichero tiene " + contadorLineas + " líneas.");
 
-            fi.close();
+            br.close();
 
             long tfinCL = System.nanoTime();
 
@@ -69,13 +71,15 @@ public class Ejercicio1 {
             contado = true;
 
         } catch (IOException e) {
-            System.err.println("Error, el archivo no existe");
+            System.err.println("Error, el fichero no existe");
             crearEscribir(a);
             contarLineas(a);
         }
     }
 
-    public static void main(String[] args) {
+
+    public static void main(String [] args){
+
         String nombreFichero = "texto_sin_buffer.txt";
 
         String menu = "- - - MENÚ - - -\n" +
@@ -131,4 +135,5 @@ public class Ejercicio1 {
             }
         } while (opc != 6);
     }
+    
 }
